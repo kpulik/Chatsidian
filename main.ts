@@ -15,8 +15,8 @@ import {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const VIEW_TYPE_CHAT = 'chatsidian-chat';
-const HISTORY_DIR    = '.obsidian/plugins/chatsidian/history';
+const VIEW_TYPE_CHAT = 'vaultchat-chat';
+const HISTORY_DIR    = '.obsidian/plugins/vaultchat/history';
 
 const EDIT_INSTRUCTIONS = `
 You have FULL ACCESS to the user's Obsidian vault. You CAN create, edit, and delete files directly.
@@ -375,7 +375,7 @@ interface PerProviderSettings {
   baseUrl: string;
 }
 
-interface ChatsidianSettings {
+interface vaultchatSettings {
   activeProvider: ProviderID;
   providers:      Record<ProviderID, PerProviderSettings>;
   systemPrompt:   string;
@@ -384,7 +384,7 @@ interface ChatsidianSettings {
   autoApplyEdits: boolean;
 }
 
-const DEFAULT_SETTINGS: ChatsidianSettings = {
+const DEFAULT_SETTINGS: vaultchatSettings = {
   activeProvider: 'anthropic',
   providers: {
     anthropic:  { apiKey: '', model: 'claude-sonnet-4-6',  baseUrl: '' },
@@ -402,7 +402,7 @@ const DEFAULT_SETTINGS: ChatsidianSettings = {
 // ─── API ─────────────────────────────────────────────────────────────────────
 
 function streamMessage(
-  settings: ChatsidianSettings,
+  settings: vaultchatSettings,
   history:  Message[],
   systemPromptOverride: string,
   onChunk:  (text: string) => void,
@@ -467,7 +467,7 @@ function streamMessage(
     };
     if (providerID === 'openrouter') {
       headers['HTTP-Referer'] = 'https://obsidian.md';
-      headers['X-Title']      = 'Chatsidian';
+      headers['X-Title']      = 'vaultchat';
     }
   }
 
@@ -537,8 +537,8 @@ function streamMessage(
 
 // ─── Chat View ────────────────────────────────────────────────────────────────
 
-class ChatsidianView extends ItemView {
-  private plugin:          ChatsidianPlugin;
+class vaultchatView extends ItemView {
+  private plugin:          vaultchatPlugin;
   private history:         Message[] = [];
   private streaming      = false;
   private currentSession:  ChatSession | null = null;
@@ -561,13 +561,13 @@ class ChatsidianView extends ItemView {
   private cancelStream: (() => void) | null = null;
   private modelLoadGen = 0;
 
-  constructor(leaf: WorkspaceLeaf, plugin: ChatsidianPlugin) {
+  constructor(leaf: WorkspaceLeaf, plugin: vaultchatPlugin) {
     super(leaf);
     this.plugin = plugin;
   }
 
   getViewType()    { return VIEW_TYPE_CHAT; }
-  getDisplayText() { return 'Chatsidian'; }
+  getDisplayText() { return 'vaultchat'; }
   getIcon()        { return 'bot'; }
 
   async onOpen() {
@@ -579,7 +579,7 @@ class ChatsidianView extends ItemView {
     const header = root.createDiv('cs-header');
     const logoEl = header.createSpan({ cls: 'cs-logo' });
     setIcon(logoEl, 'message-square');
-    header.createSpan({ cls: 'cs-title', text: 'CHATSIDIAN' });
+    header.createSpan({ cls: 'cs-title', text: 'vaultchat' });
 
     const controls = header.createDiv('cs-controls');
 
@@ -1274,7 +1274,7 @@ class ChatsidianView extends ItemView {
     const ps  = this.plugin.settings.providers[id];
 
     if (def.apiKeyLabel !== null && !ps.apiKey) {
-      new Notice(`Chatsidian: Add your ${def.name} API key in Settings`);
+      new Notice(`vaultchat: Add your ${def.name} API key in Settings`);
       return;
     }
 
@@ -1395,10 +1395,10 @@ class ChatsidianView extends ItemView {
 
 // ─── Settings Tab ─────────────────────────────────────────────────────────────
 
-class ChatsidianSettingsTab extends PluginSettingTab {
-  plugin: ChatsidianPlugin;
+class vaultchatSettingsTab extends PluginSettingTab {
+  plugin: vaultchatPlugin;
 
-  constructor(app: App, plugin: ChatsidianPlugin) {
+  constructor(app: App, plugin: vaultchatPlugin) {
     super(app, plugin);
     this.plugin = plugin;
   }
@@ -1406,7 +1406,7 @@ class ChatsidianSettingsTab extends PluginSettingTab {
   display(): void {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl('h2', { text: 'Chatsidian' });
+    containerEl.createEl('h2', { text: 'vaultchat' });
 
     for (const [pid, def] of Object.entries(PROVIDERS) as [ProviderID, ProviderDef][]) {
       const ps = this.plugin.settings.providers[pid];
@@ -1543,15 +1543,15 @@ class ChatsidianSettingsTab extends PluginSettingTab {
 
 // ─── Plugin ───────────────────────────────────────────────────────────────────
 
-export default class ChatsidianPlugin extends Plugin {
-  settings!: ChatsidianSettings;
+export default class vaultchatPlugin extends Plugin {
+  settings!: vaultchatSettings;
 
   async onload() {
     await this.loadSettings();
-    this.registerView(VIEW_TYPE_CHAT, leaf => new ChatsidianView(leaf, this));
-    this.addRibbonIcon('bot', 'Open Chatsidian', () => this.activateView());
-    this.addCommand({ id: 'open-chatsidian', name: 'Open chat', callback: () => this.activateView() });
-    this.addSettingTab(new ChatsidianSettingsTab(this.app, this));
+    this.registerView(VIEW_TYPE_CHAT, leaf => new vaultchatView(leaf, this));
+    this.addRibbonIcon('bot', 'Open vaultchat', () => this.activateView());
+    this.addCommand({ id: 'open-vaultchat', name: 'Open chat', callback: () => this.activateView() });
+    this.addSettingTab(new vaultchatSettingsTab(this.app, this));
   }
 
   async activateView() {
