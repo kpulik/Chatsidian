@@ -1,0 +1,10 @@
+{
+  "id": "claudesidian",
+  "name": "Claudesidian",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Claude AI in Obsidian using your Pro/Max subscription OAuth token",
+  "author": "Kevin Pulikkottil",
+  "authorUrl": "https://github.com/kpulik",
+  "isDesktopOnly": true
+}
