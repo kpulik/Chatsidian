@@ -10,6 +10,7 @@ import {
   Setting,
   TFile,
   WorkspaceLeaf,
+  setIcon,
 } from 'obsidian';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -543,6 +544,7 @@ class ChatsidianView extends ItemView {
   private currentSession:  ChatSession | null = null;
   private historyVisible = false;
   private contextFiles:    string[] = [];
+  private vaultFileTree  = '';
 
   private messagesEl!:     HTMLElement;
   private historyEl!:      HTMLElement;
@@ -575,8 +577,9 @@ class ChatsidianView extends ItemView {
 
     // ── Header ──
     const header = root.createDiv('cs-header');
-    header.createSpan({ cls: 'cs-logo', text: '◆' });
-    header.createSpan({ cls: 'cs-title', text: 'Chatsidian' });
+    const logoEl = header.createSpan({ cls: 'cs-logo' });
+    setIcon(logoEl, 'message-square');
+    header.createSpan({ cls: 'cs-title', text: 'CHATSIDIAN' });
 
     const controls = header.createDiv('cs-controls');
 
@@ -676,12 +679,36 @@ class ChatsidianView extends ItemView {
     });
     this.sendBtn.addEventListener('click', () => this.send());
 
+    // Build file tree and keep it updated
+    this.rebuildFileTree();
+    this.registerEvent(this.app.vault.on('create', () => this.rebuildFileTree()));
+    this.registerEvent(this.app.vault.on('delete', () => this.rebuildFileTree()));
+    this.registerEvent(this.app.vault.on('rename', () => this.rebuildFileTree()));
+
     // Auto-load most recent session
     const sessions = await this.plugin.loadAllSessions();
     if (sessions.length > 0) {
       await this.loadSession(sessions[0], false);
     } else {
       this.renderWelcome();
+    }
+  }
+
+  private rebuildFileTree() {
+    const allFiles = this.app.vault.getFiles()
+      .map(f => f.path)
+      .sort()
+      .filter(p => !p.startsWith('.obsidian/'));
+    if (allFiles.length <= 500) {
+      this.vaultFileTree = '\n\nThe following files exist in the user\'s vault. Use these EXACT paths for any file operations:\n\n' + allFiles.join('\n');
+    } else {
+      const folders = new Set<string>();
+      for (const p of allFiles) {
+        const dir = p.substring(0, p.lastIndexOf('/'));
+        if (dir) folders.add(dir);
+      }
+      const truncated = allFiles.slice(0, 300);
+      this.vaultFileTree = '\n\nThe user\'s vault has ' + allFiles.length + ' files. Folders:\n' + [...folders].sort().join('\n') + '\n\nFirst 300 files:\n' + truncated.join('\n');
     }
   }
 
@@ -902,7 +929,8 @@ class ChatsidianView extends ItemView {
 
   private renderWelcome() {
     const el = this.messagesEl.createDiv('cs-welcome');
-    el.createDiv({ cls: 'cs-welcome-icon', text: '◆' });
+    const welcomeIcon = el.createDiv({ cls: 'cs-welcome-icon' });
+    setIcon(welcomeIcon, 'message-square');
     el.createDiv({ cls: 'cs-welcome-text', text: 'What can I help you with?' });
   }
 
@@ -1276,8 +1304,8 @@ class ChatsidianView extends ItemView {
     }
     userContent += text;
 
-    // Build system prompt -always include edit instructions so the AI knows it can create/edit files
-    let systemPrompt = this.plugin.settings.systemPrompt + '\n\n' + EDIT_INSTRUCTIONS;
+    // Build system prompt -always include edit instructions + cached file tree
+    let systemPrompt = this.plugin.settings.systemPrompt + '\n\n' + EDIT_INSTRUCTIONS + this.vaultFileTree;
 
     // Create session on first message
     if (!this.currentSession) {
