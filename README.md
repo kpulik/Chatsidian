@@ -1,4 +1,4 @@
-# Chatsidian
+# VaultChat
 
 Multi-provider AI chat inside Obsidian with file reading, editing, creation, and deletion. Supports Anthropic (Claude), OpenAI, Google Gemini, OpenRouter, and Ollama.
 
@@ -35,7 +35,7 @@ Multi-provider AI chat inside Obsidian with file reading, editing, creation, and
 **From Obsidian (recommended)**
 
 1. Open **Settings > Community Plugins**
-2. Click **Browse** and search for **Chatsidian**
+2. Click **Browse** and search for **VaultChat**
 3. Click **Install**, then **Enable**
 
 **Build from source**
@@ -43,8 +43,8 @@ Multi-provider AI chat inside Obsidian with file reading, editing, creation, and
 If you prefer to install manually or want to contribute:
 
 ```bash
-git clone https://github.com/kpulik/Chatsidian
-cd Chatsidian
+git clone https://github.com/kpulik/VaultChat
+cd VaultChat
 npm install
 npm run build
 ```
@@ -52,8 +52,8 @@ npm run build
 Then copy the built files into your vault:
 
 ```bash
-mkdir -p /path/to/your/vault/.obsidian/plugins/chatsidian
-cp main.js manifest.json styles.css /path/to/your/vault/.obsidian/plugins/chatsidian/
+mkdir -p /path/to/your/vault/.obsidian/plugins/VaultChat
+cp main.js manifest.json styles.css /path/to/your/vault/.obsidian/plugins/VaultChat/
 ```
 
 Restart Obsidian. The plugin will appear in **Settings > Community Plugins**.
@@ -81,7 +81,7 @@ ollama pull qwen2.5         # 4GB, strong at multilingual
 
 To see what you have installed: `ollama list`
 
-**3. Open Chatsidian**
+**3. Open VaultChat**
 
 Select **Ollama** from the provider dropdown. The model list will auto-populate from your installed models. The base URL defaults to `http://localhost:11434`. Only change it if you're running Ollama on a different machine.
 
@@ -104,7 +104,7 @@ Select **Ollama** from the provider dropdown. The model list will auto-populate 
 
 ## Settings
 
-Go to **Settings > Chatsidian** to configure:
+Go to **Settings > VaultChat** to configure:
 
 - **API keys** for each provider (stored locally, obfuscated after entry)
 - **Default model** per provider
@@ -123,7 +123,7 @@ npm run dev   # watch mode, rebuilds on every save
 For live reloading inside Obsidian, install the [Hot Reload](https://github.com/pjeby/hot-reload) community plugin and symlink the project folder into your vault's plugins directory:
 
 ```bash
-ln -s /path/to/Chatsidian /path/to/vault/.obsidian/plugins/chatsidian
+ln -s /path/to/VaultChat /path/to/vault/.obsidian/plugins/VaultChat
 ```
 
 Open Obsidian's developer tools with **Cmd+Option+I** to debug.
