@@ -378,7 +378,7 @@ class ClaudesidianSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('API token')
-      .setDesc('Your Anthropic API key or Claude Code OAuth token.')
+      .setDesc('Standard API key (sk-ant-api03-...) from console.anthropic.com, or Claude Code OAuth token (sk-ant-oat01-...) from running "claude setup-token" in your terminal.')
       .addText(text =>
         text
           .setPlaceholder('Paste token here…')

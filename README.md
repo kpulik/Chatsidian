@@ -14,9 +14,32 @@ Built for research and personal productivity, exploring how AI can integrate int
 
 Claudesidian authenticates with Anthropic's API on behalf of your subscription. Standard API keys (`sk-ant-...`) from console.anthropic.com and Claude Code OAuth tokens are both supported.
 
-## Getting your API token
+## Getting your token
 
-Go to [console.anthropic.com](https://console.anthropic.com), sign in with your Anthropic account, and create a new API key. Copy it and paste it into **Settings > Claudesidian** in Obsidian.
+You need either a standard API key or a Claude Code OAuth token. Both work.
+
+**Option A: Standard API key** (separate billing, always stable)
+
+Go to [console.anthropic.com](https://console.anthropic.com), create an API key, and paste it in. Starts with `sk-ant-api03-`.
+
+**Option B: Claude Code OAuth token** (uses your Pro/Max subscription)
+
+Requires a Claude Pro or Max plan. Install the Claude Code CLI and run the setup command:
+
+```bash
+npm install -g @anthropic-ai/claude-code
+claude setup-token
+```
+
+Log in with your claude.ai account when the browser opens. The terminal will print a token starting with `sk-ant-oat01-`. Copy and paste that into settings.
+
+If you have already logged into Claude Code before, you can recover your existing token without re-authenticating:
+
+```bash
+security find-generic-password -s 'Claude Code-credentials' -w
+```
+
+Copy the `accessToken` value from the JSON output.
 
 ## Installation
 
