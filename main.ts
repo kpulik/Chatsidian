@@ -1161,13 +1161,13 @@ class vaultchatView extends ItemView {
             if (created && created instanceof TFile) {
               await this.app.fileManager.trashFile(created);
             }
-            statusEl.textContent = '↩ reverted - file deleted';
+            statusEl.textContent = '↩ Reverted - file deleted';
           } else if (originalContent !== null) {
             const file = this.app.vault.getAbstractFileByPath(block.filePath);
             if (file && file instanceof TFile) {
               await this.app.vault.modify(file, originalContent);
             }
-            statusEl.textContent = '↩ reverted';
+            statusEl.textContent = '↩ Reverted';
           }
           statusEl.removeClass('cs-edit-success');
           statusEl.addClass('cs-edit-reverted');
@@ -1446,7 +1446,7 @@ class vaultchatSettingsTab extends PluginSettingTab {
 
       new Setting(containerEl)
         .setName('Model')
-        .setDesc(def.dynamicModels ? 'Or type any model ID supported by this provider.' : '')
+        .setDesc(def.dynamicModels ? 'Or type any model id supported by this provider.' : '')
         .addDropdown(dd => {
           for (const m of def.models) dd.addOption(m.id, m.label);
           if (ps.model && !def.models.find(m => m.id === ps.model)) dd.addOption(ps.model, ps.model);
@@ -1456,7 +1456,7 @@ class vaultchatSettingsTab extends PluginSettingTab {
         .addText(t => {
           if (!def.dynamicModels) { t.inputEl.addClass('cs-hidden'); return; }
           t.inputEl.addClass('cs-settings-model-input');
-          t.setPlaceholder('or type model id…')
+          t.setPlaceholder('Or type model ID…')
             .onChange(v => {
               if (v.trim()) { ps.model = v.trim(); void this.plugin.saveSettings(); }
             });
