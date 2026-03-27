@@ -556,7 +556,7 @@ class vaultchatView extends ItemView {
   }
 
   getViewType()    { return VIEW_TYPE_CHAT; }
-  getDisplayText() { return 'VaultChat'; }
+  getDisplayText() { return 'Vaultchat'; }
   getIcon()        { return 'bot'; }
 
   async onOpen() {
@@ -677,7 +677,7 @@ class vaultchatView extends ItemView {
     // Auto-load most recent session
     const sessions = await this.plugin.loadAllSessions();
     if (sessions.length > 0) {
-      await this.loadSession(sessions[0], false);
+      this.loadSession(sessions[0], false);
     } else {
       this.renderWelcome();
     }
@@ -860,7 +860,7 @@ class vaultchatView extends ItemView {
   private async renderHistory() {
     this.historyEl.empty();
 
-    const newBtn = this.historyEl.createEl('button', { cls: 'cs-new-chat-btn', text: '+ New chat' });
+    const newBtn = this.historyEl.createEl('button', { cls: 'cs-new-chat-btn', text: '+ new chat' });
     newBtn.addEventListener('click', () => this.startNewSession());
 
     const sessions = await this.plugin.loadAllSessions();
@@ -948,7 +948,7 @@ class vaultchatView extends ItemView {
     const copyBtn = actions.createEl('button', { cls: 'cs-action-btn', text: 'Copy' });
     copyBtn.addEventListener('click', () => {
       void navigator.clipboard.writeText(content).then(() => {
-        copyBtn.textContent = '✓ Copied';
+        copyBtn.textContent = '✓ copied';
         setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1500);
       });
     });
@@ -1019,7 +1019,7 @@ class vaultchatView extends ItemView {
               if (!exists) await this.app.vault.adapter.mkdir(dir);
             }
             await this.app.vault.create(block.filePath, block.edits[0].replacement);
-            applyBtn.textContent = '✓ Created';
+            applyBtn.textContent = '✓ created';
             applyBtn.disabled = true;
             new Notice(`Created ${block.filePath}`);
           } catch (e) {
@@ -1040,7 +1040,7 @@ class vaultchatView extends ItemView {
               return;
             }
             await this.app.vault.modify(abstractFile, content);
-            applyBtn.textContent = `✓ Applied ${applied}/${block.edits.length}`;
+            applyBtn.textContent = `✓ applied ${applied}/${block.edits.length}`;
             applyBtn.disabled = true;
             new Notice(`Applied ${applied} edit(s) to ${block.filePath}`);
           } catch (e) {
@@ -1077,13 +1077,13 @@ class vaultchatView extends ItemView {
           success = true;
           new Notice(`Created ${block.filePath}`);
         } catch (e) {
-          statusEl.textContent = `✗ Failed to create`;
+          statusEl.textContent = `✗ failed to create`;
           statusEl.addClass('cs-edit-error');
           new Notice(`Failed to create file: ${(e as Error).message}`);
           return;
         }
       } else {
-        statusEl.textContent = '✗ File not found';
+        statusEl.textContent = '✗ file not found';
         statusEl.addClass('cs-edit-error');
         new Notice(`File not found: ${block.filePath}`);
         return;
@@ -1103,7 +1103,7 @@ class vaultchatView extends ItemView {
         }
 
         if (applied === 0) {
-          statusEl.textContent = '✗ Could not match original text';
+          statusEl.textContent = '✗ could not match original text';
           statusEl.addClass('cs-edit-error');
           new Notice(`Could not find the original text in ${block.filePath}. The file may have changed.`);
           return;
@@ -1113,7 +1113,7 @@ class vaultchatView extends ItemView {
         success = true;
         new Notice(`Applied ${applied} edit(s) to ${block.filePath}`);
       } catch (e) {
-        statusEl.textContent = '✗ Error';
+        statusEl.textContent = '✗ error';
         statusEl.addClass('cs-edit-error');
         new Notice(`Error applying edit: ${(e as Error).message}`);
         return;
@@ -1122,7 +1122,7 @@ class vaultchatView extends ItemView {
 
     if (!success) return;
 
-    statusEl.textContent = isNewFile ? '✓ Created' : '✓ Applied';
+    statusEl.textContent = isNewFile ? '✓ created' : '✓ applied';
     statusEl.addClass('cs-edit-success');
 
     // Show diff
@@ -1148,7 +1148,7 @@ class vaultchatView extends ItemView {
     };
 
     confirmBtn.addEventListener('click', () => {
-      statusEl.textContent = isNewFile ? '✓ Created -confirmed' : '✓ Applied -confirmed';
+      statusEl.textContent = isNewFile ? '✓ created - confirmed' : '✓ applied - confirmed';
       new Notice(`Changes to ${block.filePath} confirmed`);
       finish();
     });
@@ -1161,13 +1161,13 @@ class vaultchatView extends ItemView {
             if (created && created instanceof TFile) {
               await this.app.fileManager.trashFile(created);
             }
-            statusEl.textContent = '↩ Reverted -file deleted';
+            statusEl.textContent = '↩ reverted - file deleted';
           } else if (originalContent !== null) {
             const file = this.app.vault.getAbstractFileByPath(block.filePath);
             if (file && file instanceof TFile) {
               await this.app.vault.modify(file, originalContent);
             }
-            statusEl.textContent = '↩ Reverted';
+            statusEl.textContent = '↩ reverted';
           }
           statusEl.removeClass('cs-edit-success');
           statusEl.addClass('cs-edit-reverted');
@@ -1421,7 +1421,6 @@ class vaultchatSettingsTab extends PluginSettingTab {
   display(): void {
     const { containerEl } = this;
     containerEl.empty();
-    new Setting(containerEl).setName('VaultChat').setHeading();
 
     for (const [pid, def] of Object.entries(PROVIDERS) as [ProviderID, ProviderDef][]) {
       const ps = this.plugin.settings.providers[pid];
@@ -1457,7 +1456,7 @@ class vaultchatSettingsTab extends PluginSettingTab {
         .addText(t => {
           if (!def.dynamicModels) { t.inputEl.addClass('cs-hidden'); return; }
           t.inputEl.addClass('cs-settings-model-input');
-          t.setPlaceholder('Or type model ID…')
+          t.setPlaceholder('or type model ID…')
             .onChange(v => {
               if (v.trim()) { ps.model = v.trim(); void this.plugin.saveSettings(); }
             });
@@ -1466,7 +1465,7 @@ class vaultchatSettingsTab extends PluginSettingTab {
       if (def.customBaseUrl) {
         new Setting(containerEl)
           .setName('Base URL')
-          .setDesc('URL where Ollama is running.')
+          .setDesc('Address where your local model server is running.')
           .addText(t => t
             .setPlaceholder(def.defaultBaseUrl)
             .setValue(ps.baseUrl || def.defaultBaseUrl)
@@ -1474,7 +1473,7 @@ class vaultchatSettingsTab extends PluginSettingTab {
           );
         new Setting(containerEl)
           .setName('Context window (num_ctx)')
-          .setDesc('Tokens pre-allocated for KV cache. Lower = less RAM. 4096 is ~6 GB for a 9B model vs ~18 GB at 128k.')
+          .setDesc('Tokens pre-allocated for context. Lower values use less memory.')
           .addText(t => t
             .setValue(String(this.plugin.settings.ollamaNumCtx))
             .onChange(v => {
@@ -1484,8 +1483,6 @@ class vaultchatSettingsTab extends PluginSettingTab {
           );
       }
     }
-
-    new Setting(containerEl).setName('General').setHeading();
 
     new Setting(containerEl)
       .setName('System prompt')
@@ -1509,7 +1506,7 @@ class vaultchatSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('Auto-apply edits')
-      .setDesc('When enabled, AI-proposed file edits are applied immediately with Confirm/Revert buttons. When disabled, you must click Apply manually.')
+      .setDesc('When enabled, file edits are applied immediately with confirm/revert buttons. When disabled, you must click apply manually.')
       .addToggle(t => t
         .setValue(this.plugin.settings.autoApplyEdits)
         .onChange(v => { this.plugin.settings.autoApplyEdits = v; void this.plugin.saveSettings(); }),
@@ -1534,7 +1531,7 @@ class vaultchatSettingsTab extends PluginSettingTab {
     const copyBtn = row.createEl('button', { cls: 'cs-tok-btn', text: 'Copy' });
     copyBtn.addEventListener('click', () => {
       void navigator.clipboard.writeText(ps.apiKey).then(() => {
-        copyBtn.textContent = '✓ Copied';
+        copyBtn.textContent = '✓ copied';
         setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1500);
       });
     });
@@ -1569,7 +1566,7 @@ export default class vaultchatPlugin extends Plugin {
   async onload() {
     await this.loadSettings();
     this.registerView(VIEW_TYPE_CHAT, leaf => new vaultchatView(leaf, this));
-    this.addRibbonIcon('bot', 'Open VaultChat', () => { void this.activateView(); });
+    this.addRibbonIcon('bot', 'Open Vaultchat', () => { void this.activateView(); });
     this.addCommand({ id: 'open-chat', name: 'Open chat', callback: () => { void this.activateView(); } });
     this.addSettingTab(new vaultchatSettingsTab(this.app, this));
   }
@@ -1581,7 +1578,7 @@ export default class vaultchatPlugin extends Plugin {
       leaf = workspace.getRightLeaf(false) ?? workspace.getLeaf(true);
       await leaf.setViewState({ type: VIEW_TYPE_CHAT, active: true });
     }
-    workspace.revealLeaf(leaf);
+    await workspace.revealLeaf(leaf);
   }
 
   async loadSettings() {
