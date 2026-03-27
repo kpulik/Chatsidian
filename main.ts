@@ -1456,7 +1456,7 @@ class vaultchatSettingsTab extends PluginSettingTab {
         .addText(t => {
           if (!def.dynamicModels) { t.inputEl.addClass('cs-hidden'); return; }
           t.inputEl.addClass('cs-settings-model-input');
-          t.setPlaceholder('or type model ID…')
+          t.setPlaceholder('or type model id…')
             .onChange(v => {
               if (v.trim()) { ps.model = v.trim(); void this.plugin.saveSettings(); }
             });
@@ -1566,7 +1566,7 @@ export default class vaultchatPlugin extends Plugin {
   async onload() {
     await this.loadSettings();
     this.registerView(VIEW_TYPE_CHAT, leaf => new vaultchatView(leaf, this));
-    this.addRibbonIcon('bot', 'Open Vaultchat', () => { void this.activateView(); });
+    this.addRibbonIcon('bot', 'Open chat', () => { void this.activateView(); });
     this.addCommand({ id: 'open-chat', name: 'Open chat', callback: () => { void this.activateView(); } });
     this.addSettingTab(new vaultchatSettingsTab(this.app, this));
   }
